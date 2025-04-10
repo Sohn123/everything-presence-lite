@@ -813,6 +813,8 @@ uart:
 
           id(target1_active_debug).publish_state(p1_active);
           id(target1_previous_active_debug).publish_state(previous_active_1);
+
+          // Reset kalman filter
           if (p1_active && !previous_active_1) {
             id(kalman1_x) = p1_x;
             id(kalman1_y) = p1_y;
@@ -821,14 +823,17 @@ uart:
           }
           previous_active_1 = p1_active;
 
-          auto [estimate_x1, estimate_error_x1] = kalman_update(p1_x, id(kalman1_x), id(kalman1_x_err), 200.0, 1000.0);
-          auto [estimate_y1, estimate_error_y1] = kalman_update(p1_y, id(kalman1_y), id(kalman1_y_err), 200.0, 1000.0);
-          id(kalman1_x) = estimate_x1;
-          id(kalman1_x_err) = estimate_error_x1;
-          id(kalman1_y) = estimate_y1;
-          id(kalman1_y_err) = estimate_error_y1;
-          p1_x = estimate_x1;
-          p1_y = estimate_y1;
+          if (p1_active) {
+            auto [estimate_x1, estimate_error_x1] = kalman_update(p1_x, id(kalman1_x), id(kalman1_x_err), 200.0, 1000.0);
+            auto [estimate_y1, estimate_error_y1] = kalman_update(p1_y, id(kalman1_y), id(kalman1_y_err), 200.0, 1000.0);
+            id(kalman1_x) = estimate_x1;
+            id(kalman1_x_err) = estimate_error_x1;
+            id(kalman1_y) = estimate_y1;
+            id(kalman1_y_err) = estimate_error_y1;
+            p1_x = estimate_x1;
+            p1_y = estimate_y1;
+          }
+
 
           if (p2_active && !previous_active_2) {
             id(kalman2_x) = p2_x;
