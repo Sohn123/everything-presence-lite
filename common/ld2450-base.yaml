@@ -247,6 +247,12 @@ binary_sensor:
   - platform: template
     name: "Target 3 Active"
     id: target3_active
+  - platform: template
+    name: "Target 1 Active Debug"
+    id: target1_active_debug
+  - platform: template
+    name: "Target 1 Active Previous Debug"
+    id: target1_previous_active_debug
 
 number:
   - platform: template
@@ -805,6 +811,8 @@ uart:
           int16_t p3_distance_resolution = (uint16_t((bytes[27] << 8) | bytes[26] ));
           bool p3_active = is_any_not_zero(bytes, 20, 28);
 
+          id(target1_active_debug) = p1_active;
+          id(target1_previous_active_debug) = previous_active_1;
           if (p1_active && !previous_active_1) {
             id(kalman1_x) = p1_x;
             id(kalman1_y) = p1_y;
@@ -855,7 +863,6 @@ uart:
           id(kalman3_y_err) = estimate_error_y3;
           p3_x = estimate_x3;
           p3_y = estimate_y3;
-
 
           const static float RADIANS_TO_DEGREES = 180.0 / 3.14159265358979323846;
           const static float DEGREES_TO_RADIANS = 3.14159265358979323846 / 180.0;
