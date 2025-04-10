@@ -757,7 +757,7 @@ uart:
             p1_speed = 0 - p1_speed;
           }
           int16_t p1_distance_resolution = (uint16_t((bytes[11] << 8) | bytes[10] )); 
-          bool p1_active = is_all_zero(bytes, 4, 12);
+          bool p1_active = is_any_not_zero(bytes, 4, 12);
 
           int16_t p2_x = (uint16_t((bytes[13] << 8) | bytes[12] ));
           if ((bytes[13] & 0x80) >> 7) {
@@ -780,7 +780,7 @@ uart:
             p2_speed = 0 - p2_speed;
           }
           int16_t p2_distance_resolution = (uint16_t((bytes[19] << 8) | bytes[18] )); 
-          bool p2_active = is_all_zero(bytes, 12, 20);
+          bool p2_active = is_any_not_zero(bytes, 12, 20);
 
           int16_t p3_x = (uint16_t((bytes[21] << 8) | bytes[20] ));
           if ((bytes[21] & 0x80) >> 7) {
@@ -803,7 +803,7 @@ uart:
             p3_speed = 0 - p3_speed;
           }
           int16_t p3_distance_resolution = (uint16_t((bytes[27] << 8) | bytes[26] ));
-          bool p3_active = is_all_zero(bytes, 20, 28);
+          bool p3_active = is_any_not_zero(bytes, 20, 28);
 
           if (p1_active && !previous_active_1) {
             id(kalman1_x) = p1_x;
@@ -811,6 +811,7 @@ uart:
             id(kalman1_x_err) = 1;
             id(kalman1_y_err) = 1;
           }
+          previous_active_1 = p1_active;
 
           auto [estimate_x1, estimate_error_x1] = kalman_update(p1_x, id(kalman1_x), id(kalman1_x_err), 200.0, 1000.0);
           auto [estimate_y1, estimate_error_y1] = kalman_update(p1_y, id(kalman1_y), id(kalman1_y_err), 200.0, 1000.0);
@@ -827,6 +828,7 @@ uart:
             id(kalman2_x_err) = 2;
             id(kalman2_y_err) = 2;
           }
+          previous_active_2 = p2_active;
 
           auto [estimate_x2, estimate_error_x2] = kalman_update(p2_x, id(kalman2_x), id(kalman2_x_err), 200.0, 1000.0);
           auto [estimate_y2, estimate_error_y2] = kalman_update(p2_y, id(kalman2_y), id(kalman2_y_err), 200.0, 1000.0);
@@ -843,6 +845,7 @@ uart:
             id(kalman3_x_err) = 3;
             id(kalman3_y_err) = 3;
           }
+          previous_active_3 = p3_active;
 
           auto [estimate_x3, estimate_error_x3] = kalman_update(p3_x, id(kalman3_x), id(kalman3_x_err), 200.0, 1000.0);
           auto [estimate_y3, estimate_error_y3] = kalman_update(p3_y, id(kalman3_y), id(kalman3_y_err), 200.0, 1000.0);

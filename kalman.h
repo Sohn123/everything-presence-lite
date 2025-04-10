@@ -15,9 +15,9 @@ std::tuple<float, float> kalman_update(float measurement, float estimate, float 
   return std::make_tuple(estimate, error_estimate);
 }
 
-bool is_all_zero(const std::vector<uint8_t>& vec, size_t start, size_t end) {
+bool is_any_not_zero(const std::vector<uint8_t>& vec, size_t start, size_t end) {
     if (start > end || end > vec.size()) return false; // basic bounds check
-    return std::all_of(vec.begin() + start, vec.begin() + end, [](uint8_t b) {
-        return b == 0;
+    return std::any_of(vec.begin() + start, vec.begin() + end, [](uint8_t b) {
+        return b != 0;
     });
 }
