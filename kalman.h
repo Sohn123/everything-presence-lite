@@ -3,12 +3,14 @@
 #include <algorithm> // for std::all_of
 #include <cstdint>   // for uint8_t
 
-std::tuple<float, float> kalman_update(float measurement, float estimate, float error_estimate, float process_noise, float measurement_noise) {
+std::tuple<float, float> kalman_update(float measurement, float speed, float estimate, float error_estimate, float process_noise, float measurement_noise) {
+  float adaptive_measurement_noise = measurement_noise / (1.0 + abs(speed) / 30.0);
+
   // Prediction update
   error_estimate += process_noise;
 
   // Measurement update
-  float kalman_gain = error_estimate / (error_estimate + measurement_noise);
+  float kalman_gain = error_estimate / (error_estimate + adaptive_measurement_noise);
   estimate = estimate + kalman_gain * (measurement - estimate);
   error_estimate = (1 - kalman_gain) * error_estimate;
 

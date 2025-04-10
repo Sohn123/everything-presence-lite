@@ -824,8 +824,8 @@ uart:
           previous_active_1 = p1_active;
 
           if (p1_active) {
-            auto [estimate_x1, estimate_error_x1] = kalman_update(p1_x, id(kalman1_x), id(kalman1_x_err), 200.0, 1000.0);
-            auto [estimate_y1, estimate_error_y1] = kalman_update(p1_y, id(kalman1_y), id(kalman1_y_err), 200.0, 1000.0);
+            auto [estimate_x1, estimate_error_x1] = kalman_update(p1_x, p1_speed, id(kalman1_x), id(kalman1_x_err), 200.0, 1000.0);
+            auto [estimate_y1, estimate_error_y1] = kalman_update(p1_y, p1_speed, id(kalman1_y), id(kalman1_y_err), 200.0, 1000.0);
             id(kalman1_x) = estimate_x1;
             id(kalman1_x_err) = estimate_error_x1;
             id(kalman1_y) = estimate_y1;
