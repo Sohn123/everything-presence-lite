@@ -781,8 +781,8 @@ uart:
           }
           int16_t p3_distance_resolution = (uint16_t((bytes[27] << 8) | bytes[26] ));
 
-          auto [estimate_x, estimate_error_x] = kalman_update(p1_x, id(kalman1_x), id(kalman1_x_err), 10.0, 100.0);
-          auto [estimate_y, estimate_error_y] = kalman_update(p1_y, id(kalman1_y), id(kalman1_y_err), 10.0, 100.0);
+          auto [estimate_x, estimate_error_x] = kalman_update(p1_x, id(kalman1_x), id(kalman1_x_err), 200.0, 1000.0);
+          auto [estimate_y, estimate_error_y] = kalman_update(p1_y, id(kalman1_y), id(kalman1_y_err), 200.0, 1000.0);
           id(kalman1_x) = estimate_x;
           id(kalman1_x_err) = estimate_error_x;
           id(kalman1_y) = estimate_y;
