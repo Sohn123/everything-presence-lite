@@ -524,8 +524,22 @@ sensor:
     state_class: measurement
     device_class: distance
   - platform: template
+    name: "Target 1 X Filtered"
+    id: target1_x_filtered
+    accuracy_decimals: 0
+    unit_of_measurement: 'mm'
+    state_class: measurement
+    device_class: distance
+  - platform: template
     name: "Target 1 Y"
     id: target1_y
+    accuracy_decimals: 0
+    unit_of_measurement: 'mm'
+    state_class: measurement
+    device_class: distance
+  - platform: template
+    name: "Target 1 Y Filtered"
+    id: target1_y_filtered
     accuracy_decimals: 0
     unit_of_measurement: 'mm'
     state_class: measurement
@@ -694,6 +708,8 @@ uart:
     sequence:
       # - lambda: UARTDebug::log_hex(direction, bytes, ' ');
       - lambda: |-
+          static float previous_x = 0.0;
+          static float previous_y = 0.0;
           if ((millis() - id(mmwave_update_time)) <= 250) { 
             return;
           };
@@ -765,8 +781,10 @@ uart:
           }
           int16_t p3_distance_resolution = (uint16_t((bytes[27] << 8) | bytes[26] ));
 
-          p1_x = kalman_update(p1_x, id(kalman1_x), id(kalman1_x_err), 1.0, 10.0);
-          p1_y = kalman_update(p1_y, id(kalman1_y), id(kalman1_y_err), 1.0, 10.0);
+          p1_x = kalman_update(p1_x, id(kalman1_x), id(kalman1_x_err), 10.0, 100.0);
+          p1_y = kalman_update(p1_y, id(kalman1_y), id(kalman1_y_err), 10.0, 100.0);
+          id(kalman1_x) = p1_x;
+          id(kalman1_y) = p1_y;
 
 
           const static float RADIANS_TO_DEGREES = 180.0 / 3.14159265358979323846;
