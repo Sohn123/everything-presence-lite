@@ -811,8 +811,8 @@ uart:
           int16_t p3_distance_resolution = (uint16_t((bytes[27] << 8) | bytes[26] ));
           bool p3_active = is_any_not_zero(bytes, 20, 28);
 
-          id(target1_active_debug) = p1_active;
-          id(target1_previous_active_debug) = previous_active_1;
+          id(target1_active_debug).publish_state(p1_active);
+          id(target1_previous_active_debug).publish_state(previous_active_1);
           if (p1_active && !previous_active_1) {
             id(kalman1_x) = p1_x;
             id(kalman1_y) = p1_y;
