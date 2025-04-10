@@ -43,6 +43,30 @@ globals:
   - id: kalman1_y_err
     type: float
     initial_value: '1'
+  - id: kalman2_x
+    type: float
+    initial_value: '0'
+  - id: kalman2_y
+    type: float
+    initial_value: '0'
+  - id: kalman2_x_err
+    type: float
+    initial_value: '1'
+  - id: kalman2_y_err
+    type: float
+    initial_value: '1'
+  - id: kalman3_x
+    type: float
+    initial_value: '0'
+  - id: kalman3_y
+    type: float
+    initial_value: '0'
+  - id: kalman3_x_err
+    type: float
+    initial_value: '1'
+  - id: kalman3_y_err
+    type: float
+    initial_value: '1'
 
 
 interval:
@@ -708,12 +732,9 @@ uart:
     sequence:
       # - lambda: UARTDebug::log_hex(direction, bytes, ' ');
       - lambda: |-
-          static float previous_x = 0.0;
-          static float previous_y = 0.0;
-          if ((millis() - id(mmwave_update_time)) <= 250) { 
-            return;
-          };
-          id(mmwave_update_time) = millis();
+          static bool previous_active_1 = false;
+          static bool previous_active_2 = false;
+          static bool previous_active_3 = false;
 
           int16_t p1_x = (uint16_t((bytes[5] << 8) | bytes[4] ));
           if ((bytes[5] & 0x80) >> 7) {
@@ -736,6 +757,7 @@ uart:
             p1_speed = 0 - p1_speed;
           }
           int16_t p1_distance_resolution = (uint16_t((bytes[11] << 8) | bytes[10] )); 
+          bool p1_active = is_all_zero(bytes, 4, 12);
 
           int16_t p2_x = (uint16_t((bytes[13] << 8) | bytes[12] ));
           if ((bytes[13] & 0x80) >> 7) {
@@ -758,6 +780,7 @@ uart:
             p2_speed = 0 - p2_speed;
           }
           int16_t p2_distance_resolution = (uint16_t((bytes[19] << 8) | bytes[18] )); 
+          bool p2_active = is_all_zero(bytes, 12, 20);
 
           int16_t p3_x = (uint16_t((bytes[21] << 8) | bytes[20] ));
           if ((bytes[21] & 0x80) >> 7) {
@@ -780,6 +803,14 @@ uart:
             p3_speed = 0 - p3_speed;
           }
           int16_t p3_distance_resolution = (uint16_t((bytes[27] << 8) | bytes[26] ));
+          bool p3_active = is_all_zero(bytes, 20, 28);
+
+          if (p1_active && !previous_active_1) {
+            id(kalman1_x) = p1_x;
+            id(kalman1_y) = p1_y;
+            id(kalman1_x_err) = 1;
+            id(kalman1_y_err) = 1;
+          }
 
           auto [estimate_x, estimate_error_x] = kalman_update(p1_x, id(kalman1_x), id(kalman1_x_err), 200.0, 1000.0);
           auto [estimate_y, estimate_error_y] = kalman_update(p1_y, id(kalman1_y), id(kalman1_y_err), 200.0, 1000.0);
@@ -789,6 +820,38 @@ uart:
           id(kalman1_y_err) = estimate_error_y;
           p1_x = estimate_x;
           p1_y = estimate_y;
+
+          if (p2_active && !previous_active_2) {
+            id(kalman2_x) = p2_x;
+            id(kalman2_y) = p2_y;
+            id(kalman2_x_err) = 2;
+            id(kalman2_y_err) = 2;
+          }
+
+          auto [estimate_x, estimate_error_x] = kalman_update(p2_x, id(kalman2_x), id(kalman2_x_err), 200.0, 1000.0);
+          auto [estimate_y, estimate_error_y] = kalman_update(p2_y, id(kalman2_y), id(kalman2_y_err), 200.0, 1000.0);
+          id(kalman2_x) = estimate_x;
+          id(kalman2_x_err) = estimate_error_x;
+          id(kalman2_y) = estimate_y;
+          id(kalman2_y_err) = estimate_error_y;
+          p2_x = estimate_x;
+          p2_y = estimate_y;
+
+          if (p3_active && !previous_active_3) {
+            id(kalman3_x) = p3_x;
+            id(kalman3_y) = p3_y;
+            id(kalman3_x_err) = 3;
+            id(kalman3_y_err) = 3;
+          }
+
+          auto [estimate_x, estimate_error_x] = kalman_update(p3_x, id(kalman3_x), id(kalman3_x_err), 200.0, 1000.0);
+          auto [estimate_y, estimate_error_y] = kalman_update(p3_y, id(kalman3_y), id(kalman3_y_err), 200.0, 1000.0);
+          id(kalman3_x) = estimate_x;
+          id(kalman3_x_err) = estimate_error_x;
+          id(kalman3_y) = estimate_y;
+          id(kalman3_y_err) = estimate_error_y;
+          p3_x = estimate_x;
+          p3_y = estimate_y;
 
 
           const static float RADIANS_TO_DEGREES = 180.0 / 3.14159265358979323846;

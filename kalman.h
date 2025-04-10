@@ -1,4 +1,8 @@
 #include <tuple>
+#include <vector>
+#include <algorithm> // for std::all_of
+#include <cstdint>   // for uint8_t
+
 std::tuple<float, float> kalman_update(float measurement, float estimate, float error_estimate, float process_noise, float measurement_noise) {
   // Prediction update
   error_estimate += process_noise;
@@ -9,4 +13,11 @@ std::tuple<float, float> kalman_update(float measurement, float estimate, float 
   error_estimate = (1 - kalman_gain) * error_estimate;
 
   return std::make_tuple(estimate, error_estimate);
+}
+
+bool is_all_zero(const std::vector<uint8_t>& vec, size_t start, size_t end) {
+    if (start > end || end > vec.size()) return false; // basic bounds check
+    return std::all_of(vec.begin() + start, vec.begin() + end, [](uint8_t b) {
+        return b == 0;
+    });
 }
