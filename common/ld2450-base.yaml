@@ -835,39 +835,39 @@ uart:
           }
 
 
-          if (p2_active && !previous_active_2) {
-            id(kalman2_x) = p2_x;
-            id(kalman2_y) = p2_y;
-            id(kalman2_x_err) = 2;
-            id(kalman2_y_err) = 2;
-          }
-          previous_active_2 = p2_active;
+          //if (p2_active && !previous_active_2) {
+          //  id(kalman2_x) = p2_x;
+          //  id(kalman2_y) = p2_y;
+          //  id(kalman2_x_err) = 2;
+          //  id(kalman2_y_err) = 2;
+          //}
+          //previous_active_2 = p2_active;
 
-          auto [estimate_x2, estimate_error_x2] = kalman_update(p2_x, id(kalman2_x), id(kalman2_x_err), 200.0, 1000.0);
-          auto [estimate_y2, estimate_error_y2] = kalman_update(p2_y, id(kalman2_y), id(kalman2_y_err), 200.0, 1000.0);
-          id(kalman2_x) = estimate_x2;
-          id(kalman2_x_err) = estimate_error_x2;
-          id(kalman2_y) = estimate_y2;
-          id(kalman2_y_err) = estimate_error_y2;
-          p2_x = estimate_x2;
-          p2_y = estimate_y2;
+          //auto [estimate_x2, estimate_error_x2] = kalman_update(p2_x, id(kalman2_x), id(kalman2_x_err), 200.0, 1000.0);
+          //auto [estimate_y2, estimate_error_y2] = kalman_update(p2_y, id(kalman2_y), id(kalman2_y_err), 200.0, 1000.0);
+          //id(kalman2_x) = estimate_x2;
+          //id(kalman2_x_err) = estimate_error_x2;
+          //id(kalman2_y) = estimate_y2;
+          //id(kalman2_y_err) = estimate_error_y2;
+          //p2_x = estimate_x2;
+          //p2_y = estimate_y2;
 
-          if (p3_active && !previous_active_3) {
-            id(kalman3_x) = p3_x;
-            id(kalman3_y) = p3_y;
-            id(kalman3_x_err) = 3;
-            id(kalman3_y_err) = 3;
-          }
-          previous_active_3 = p3_active;
+          //if (p3_active && !previous_active_3) {
+          //  id(kalman3_x) = p3_x;
+          //  id(kalman3_y) = p3_y;
+          //  id(kalman3_x_err) = 3;
+          //  id(kalman3_y_err) = 3;
+          //}
+          //previous_active_3 = p3_active;
 
-          auto [estimate_x3, estimate_error_x3] = kalman_update(p3_x, id(kalman3_x), id(kalman3_x_err), 200.0, 1000.0);
-          auto [estimate_y3, estimate_error_y3] = kalman_update(p3_y, id(kalman3_y), id(kalman3_y_err), 200.0, 1000.0);
-          id(kalman3_x) = estimate_x3;
-          id(kalman3_x_err) = estimate_error_x3;
-          id(kalman3_y) = estimate_y3;
-          id(kalman3_y_err) = estimate_error_y3;
-          p3_x = estimate_x3;
-          p3_y = estimate_y3;
+          //auto [estimate_x3, estimate_error_x3] = kalman_update(p3_x, id(kalman3_x), id(kalman3_x_err), 200.0, 1000.0);
+          //auto [estimate_y3, estimate_error_y3] = kalman_update(p3_y, id(kalman3_y), id(kalman3_y_err), 200.0, 1000.0);
+          //id(kalman3_x) = estimate_x3;
+          //id(kalman3_x_err) = estimate_error_x3;
+          //id(kalman3_y) = estimate_y3;
+          //id(kalman3_y_err) = estimate_error_y3;
+          //p3_x = estimate_x3;
+          //p3_y = estimate_y3;
 
           const static float RADIANS_TO_DEGREES = 180.0 / 3.14159265358979323846;
           const static float DEGREES_TO_RADIANS = 3.14159265358979323846 / 180.0;
